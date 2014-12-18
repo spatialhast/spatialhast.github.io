@@ -34,23 +34,26 @@
             maxZoom: 18,
 			attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+		
+		
+   var Markerlayer = L.geoJson(null, {
+        pointToLayer: function(feature, latlng) {
+            marker = L.marker(latlng, {});
+            marker.options['title'] = feature.properties['uname']; // ADDED
+            return marker;
 
-        var Markerlayer = L.geoJson(null, {
-            pointToLayer: function(feature, latlng) {
-                return L.marker(latlng, {});
+        },
+        onEachFeature: function(feature, layerinfo) {
+            if (feature.properties) {
+                var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Id</th><td>" + feature.properties.gid + "</td></tr>" + "<tr><th>Name</th><td>" + feature.properties.uname + "<table>";
 
-            },
-            onEachFeature: function(feature, layerinfo) {
-                if (feature.properties) {
-                    var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Id</th><td>" + feature.properties.gid + "</td></tr>" + "<tr><th>Name</th><td>" + feature.properties.uname + "<table>";
-
-                    layerinfo.bindPopup(content, {
-                        closeButton: true
-                    });
-                }
+                layerinfo.bindPopup(content, {
+                    closeButton: true
+                });
             }
-        });
-
+        }
+    });		
+		
         $.getJSON("http://134.249.136.27:8080/geoserver/krasnokutsk/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=krasnokutsk:usptemp&maxFeatures=50&outputFormat=application/json", function(data) {
             Markerlayer.addData(data);
         });
@@ -75,6 +78,9 @@
 
 
         map.addControl(list);
+		
+		
+		
     </script>
 
 </body>
