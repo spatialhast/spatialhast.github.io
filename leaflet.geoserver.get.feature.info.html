@@ -35,7 +35,7 @@
         var wms_url = 'http://134.249.136.27:8080/geoserver/gedit/wms';
 		var ows_url = 'http://134.249.136.27:8080/geoserver/gedit/ows';	
 	
-	
+
 	
         var layerOSM = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
@@ -44,12 +44,7 @@
         });
 
 
-
-
-
-
-		
-		
+	
 		
         var layerBoundary = new L.TileLayer.WMS(wms_url, {
             layers: 'gedit:boundary',
