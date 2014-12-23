@@ -350,11 +350,34 @@ map.on('click', function(result) {
 */
 
 
+   var sw_lat = map.getBounds()._southWest.lat;
+   var sw_long = map.getBounds()._southWest.lng;
+   var ne_lat = map.getBounds()._northEast.lat;
+   var ne_long = map.getBounds()._northEast.lng;
+ console.log(ne_long);
+
+   map.on('moveend', function() { 
+     console.log(map.getBounds());
+});
 
 
 
+var bb = map.getBounds(),
+sw = bb.getSouthWest(),
+ne = bb.getNorthEast(),
+bbox = [
+[ parseFloat(sw.lat.toFixed(6)), parseFloat(sw.lng.toFixed(6)) ],
+[ parseFloat(ne.lat.toFixed(6)), parseFloat(ne.lng.toFixed(6)) ]
+];
+console.log(bbox);
 
 
+
+   
+//var cqlf = "BBOX(the_geom," + ne_long + "," + ne_lat + "," + sw_long + "," + sw_lat + ")";
+
+
+//console.log(cqlf);
 
 
 var defaultParameters = {
@@ -364,7 +387,9 @@ var defaultParameters = {
     typeName : 'gedit:point',
     outputFormat : 'text/javascript',
     format_options : 'callback:getJson',
-    SrsName : 'EPSG:4326'
+    srsName : 'EPSG:4326',
+	maxFeatures: '10000'
+	//,cql_filter: cqlf
 };
       var geoJsonLayer = new L.GeoJSON();
 
@@ -400,7 +425,6 @@ var ajax = $.ajax({
 	        }).addTo(markers);
     }
 });
-
 markers.addTo(map);
 
 
