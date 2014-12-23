@@ -31,6 +31,12 @@
 
 	
     <script>
+	
+        var wms_url = 'http://134.249.136.27:8080/geoserver/gedit/wms';
+		var ows_url = 'http://134.249.136.27:8080/geoserver/gedit/ows';	
+	
+	
+	
         var layerOSM = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
             zIndex: 10,
@@ -40,9 +46,12 @@
 
 
 
-        var geourl = 'http://134.249.136.27:8080/geoserver/gedit/wms';
 
-        var layerBoundary = new L.TileLayer.WMS(geourl, {
+
+		
+		
+		
+        var layerBoundary = new L.TileLayer.WMS(wms_url, {
             layers: 'gedit:boundary',
             format: 'image/png',
             //styles: 'osm_poi',
@@ -52,7 +61,7 @@
             opacity: 1
         });
 
-        var layerBuildings = new L.TileLayer.WMS(geourl, {
+        var layerBuildings = new L.TileLayer.WMS(wms_url, {
             layers: 'gedit:buildings',
             format: 'image/png',
             //styles: 'osm_poi',
@@ -62,7 +71,7 @@
             opacity: 1
         });
 
-        var layerRoads = new L.TileLayer.WMS(geourl, {
+        var layerRoads = new L.TileLayer.WMS(wms_url, {
             layers: 'gedit:roads',
             format: 'image/png',
             //styles: 'osm_poi',
@@ -72,7 +81,7 @@
             opacity: 1
         });
 
-        var layerPoint = new L.TileLayer.WMS(geourl, {
+        var layerPoint = new L.TileLayer.WMS(wms_url, {
             layers: 'gedit:point',
             format: 'image/png',
             //styles: 'osm_poi',
@@ -119,7 +128,7 @@
 
 
             $.ajax({
-                    url: geourl,
+                    url: wms_url,
                     dataType: 'xml',
                     data: {
                         'tiled': true,
@@ -203,7 +212,7 @@
             var bbox = map.getBounds()._southWest.lng + "," + map.getBounds()._southWest.lat + "," + map.getBounds()._northEast.lng + "," + map.getBounds()._northEast.lat;
 
             $.ajax({
-                    url: geourl,
+                    url: wms_url,
                     dataType: 'xml',
                     data: {
                         'tiled': true,
@@ -351,7 +360,7 @@ map.on('click', function(result) {
 
 
 
-var owsrootUrl = 'http://134.249.136.27:8080/geoserver/gedit/ows';
+
 
 var defaultParameters = {
     service : 'WFS',
@@ -369,7 +378,7 @@ var defaultParameters = {
       }
 
 var parameters = L.Util.extend(defaultParameters);
-var URL = owsrootUrl + L.Util.getParamString(parameters);
+var URL = ows_url + L.Util.getParamString(parameters);
 
 var markers = L.markerClusterGroup();
 var WFSLayer = null;
@@ -388,16 +397,16 @@ var ajax = $.ajax({
 },
             onEachFeature: function (feature, layer) {
                 popupOptions = {maxWidth: 600};
-                //layer.bindLabel('<h4>'+feature.properties.OSM_ID+'</h4>');
+                layer.bindLabel('<h4>'+feature.properties.OSM_ID+'</h4>');
                 //sidebar.setContent('<h4>'+feature.properties.musno+'</h4><br>'+'<h4>'+feature.properties.exchange_name+'</h4><br>'+feature.properties.pcp, popupOptions);
                 layer.bindPopup('<h4>'+feature.properties.OSM_ID+'</h4><br>'+'<h4>'+feature.properties.NAME+'</h4><br>'+feature.properties.gid
                     ,popupOptions);
             }
-	        }).addTo(markers.addTo(map));
+	        }).addTo(markers);
     }
 });
 
-
+markers.addTo(map);
 
 
 
