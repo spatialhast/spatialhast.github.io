@@ -4,7 +4,8 @@
 <head>
     <title>Leaflet GeoServer GetFeatureInfo</title>
     <link rel="stylesheet" href="assets/leaflet-0.7.3/leaflet.css">
-
+    <link rel="stylesheet" href="assets/leaflet.markercluster/MarkerCluster.css">
+    <link rel="stylesheet" href="assets/leaflet.markercluster/MarkerCluster.Default.css">
 
 
     <style type="text/css">
@@ -25,7 +26,8 @@
     <script src="assets/leaflet-0.7.3/leaflet.js"></script>
     <script src="assets/leaflet.proj4/proj4-compressed.js"></script>
     <script src="assets/leaflet.proj4/proj4leaflet.js"></script>
-
+    <script src="assets/leaflet.markercluster/leaflet.markercluster-src.js"></script>
+	
     <script>
         var layerOSM = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
@@ -198,8 +200,6 @@
 
             var bbox = map.getBounds()._southWest.lng + "," + map.getBounds()._southWest.lat + "," + map.getBounds()._northEast.lng + "," + map.getBounds()._northEast.lat;
 
-
-
             $.ajax({
                     url: geourl,
                     dataType: 'xml',
@@ -270,11 +270,7 @@ var kk = '['+ca+']';
 
 
 
-                        var circle = new L.circle(kk, 50, {
-										color: 'red',
-										fillColor: '#f03',
-										fillOpacity: 0.5
-									}).addTo(map);
+
 
 						//var marker = L.marker([ca]).addTo(map);
 
@@ -283,8 +279,134 @@ var kk = '['+ca+']';
         };
 
 
+									var circle = new L.circle([48.4625027, 35.0419489], 10, {
+										color: 'red',
+										fillColor: '#f03',
+										fillOpacity: 0.5
+									}).addTo(map);
+									
+									
+			
 
 
+
+
+
+
+
+
+
+/*
+var currentAddress = L.layerGroup().addTo(map);
+
+function handleJson(data) {
+
+var geoJsonLayer = new L.GeoJSON();
+    geojsonLayer.addData(data);
+    //geojsonLayer.setStyle(defaultStyle);
+    currentAddress.addLayer(geojsonLayer)
+
+}
+
+
+map.on('click', function(result) {
+
+    var rootUrl = 'http://134.249.136.27:8080/geoserver/gedit/ows';
+
+    var defaultParameters = {
+        service : 'WFS',
+        version : '1.0.0',
+        request : 'GetFeature',
+        typeName : 'gedit:buildings',
+        maxFeatures : 100,
+        outputFormat : 'text/javascript',
+        format_options : 'callback:parseResponse'
+
+    };
+
+    var customParams = {
+        bbox : map.getBounds().toBBoxString(),
+        //cql_filter:'CONTAINS(the_geom, POINT(' + thisLatLon + '))'
+    };
+
+    var parameters = L.Util.extend(defaultParameters, customParams);
+
+    console.log(rootUrl + L.Util.getParamString(parameters));
+
+    $.ajax({
+        url : rootUrl + L.Util.getParamString(parameters),
+        dataType : 'jsonp',
+        jsonpCallback : 'parseResponse',
+        success : handleJson
+    });
+});
+
+*/
+
+
+
+
+
+
+
+var owsrootUrl = 'http://134.249.136.27:8080/geoserver/gedit/ows';
+
+var defaultParameters = {
+    service : 'WFS',
+    version : '2.0',
+    request : 'GetFeature',
+    typeName : 'gedit:point',
+    outputFormat : 'text/javascript',
+    format_options : 'callback:getJson',
+    SrsName : 'EPSG:4326'
+};
+      var geoJsonLayer = new L.GeoJSON();
+
+      function getJson(data) {
+          geoJsonLayer.addData(data);
+      }
+
+var parameters = L.Util.extend(defaultParameters);
+var URL = owsrootUrl + L.Util.getParamString(parameters);
+
+var markers = L.markerClusterGroup();
+var WFSLayer = null;
+var ajax = $.ajax({
+    url : URL,
+    dataType : 'jsonp',
+    jsonpCallback : 'getJson',
+    success : function (response) {
+       WFSLayer = L.geoJson(response, {
+            style: function (feature) {
+                return {
+                    stroke: false,
+                    fillColor: 'FFFFFF',
+                    fillOpacity: 0
+                };
+},
+            onEachFeature: function (feature, layer) {
+                popupOptions = {maxWidth: 600};
+                //layer.bindLabel('<h4>'+feature.properties.OSM_ID+'</h4>');
+                //sidebar.setContent('<h4>'+feature.properties.musno+'</h4><br>'+'<h4>'+feature.properties.exchange_name+'</h4><br>'+feature.properties.pcp, popupOptions);
+                layer.bindPopup('<h4>'+feature.properties.OSM_ID+'</h4><br>'+'<h4>'+feature.properties.NAME+'</h4><br>'+feature.properties.gid
+                    ,popupOptions);
+            }
+	        }).addTo(markers.addTo(map));
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+			
+									
         map.on("overlayadd", function(e) {
             if (e.layer === layerBuildings) {
                 map.addEventListener('click', getBuildingsInfo);
