@@ -111,7 +111,7 @@
 
         var layerOSMGPSTrack = L.tileLayer('http://{s}.gps-tile.openstreetmap.org/lines/{z}/{x}/{y}.png', {
             maxZoom: 18,
-            zIndex: 1,
+            zIndex: 1000,
             attribution: '&copy; Tracks <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         });
 
@@ -133,15 +133,23 @@
             "Empty Layer": layerEmpty
         };
 
-        var LayerControlServices = L.control.groupedLayers(null, {}, {
+		
+	    var LayerControlBase = L.control.groupedLayers(baseLayers, {}, {
             collapsed: false
-        }).addTo(map);
+        });	
+		
+		
+        var LayerControlServices = L.control.groupedLayers({}, {}, {
+            collapsed: false
+        });
         LayerControlServices.addOverlay(layerOSMGPSTrack, "OSM GPS Tracks", "Custom Layers");
 		
-        var LayerControlBase = L.control.groupedLayers(baseLayers, null, {
-            collapsed: false
-        }).addTo(map);
-
+		
+		
+		LayerControlBase.addTo(map);		
+		LayerControlServices.addTo(map);
+		
+		
 		$('.leaflet-top.leaflet-right .leaflet-control-layers').css('width', '178px');
     </script>
 
