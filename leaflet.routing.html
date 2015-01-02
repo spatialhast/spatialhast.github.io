@@ -1,0 +1,73 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <title>Leaflet Routing. Button</title>
+    <link rel="stylesheet" href="assets/font-awesome-4.2.0/css/font-awesome.min.css">	
+    <link rel="stylesheet" href="assets/leaflet-0.7.3/leaflet.css">
+    <link rel="stylesheet" href="assets/leaflet.routing-machine/dist/leaflet-routing-machine.css" />
+
+    <style type="text/css">
+        html,
+        body,
+        #map {
+            margin: 0px;
+            height: 100%;
+            width: 100%;
+        }
+        .leaflet-routing-container {
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="assets/jquery-1.11.1.min.js"></script>
+    <script src="assets/leaflet-0.7.3/leaflet.js"></script>
+    <script src="assets/leaflet.easybutton/easy-button.js"></script>	
+    <script src="assets/leaflet.routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script src="assets/leaflet.routing-machine/dist/Control.Geocoder.js"></script>
+
+    <script>
+        var map = L.map('map', {
+            center: [50.0669, 35.1638],
+            zoom: 15
+        });
+
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+
+        L.easyButton('fa-level-up',
+            function() {
+
+                var routing = L.Routing.control({
+                    plan: L.Routing.plan([
+                        L.latLng(50.07132, 35.14103),
+                        L.latLng(50.05459, 35.18239)
+                    ], {
+                        waypointIcon: function(i) {
+                            return new L.Icon.Label.Default({
+                                labelText: String.fromCharCode(65 + i)
+                            });
+                        },
+                        geocoder: L.Control.Geocoder.nominatim()
+                    }),
+                    routeWhileDragging: true,
+                    routeDragTimeout: 250
+                });
+
+                map.addControl(routing);
+
+            },
+            'Display Route'
+        ).addTo(map);
+    </script>
+
+</body>
+
+</html>

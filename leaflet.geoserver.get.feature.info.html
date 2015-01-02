@@ -1,0 +1,462 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <title>Leaflet GeoServer GetFeatureInfo</title>
+    <link rel="stylesheet" href="assets/leaflet-0.7.3/leaflet.css">
+    <link rel="stylesheet" href="assets/leaflet.markercluster/MarkerCluster.css">
+    <link rel="stylesheet" href="assets/leaflet.markercluster/MarkerCluster.Default.css">
+    <link rel="stylesheet" href="assets/leaflet.label/leaflet.label.css">
+
+    <style type="text/css">
+        html,
+        body,
+        #map {
+            margin: 0px;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="assets/jquery-1.11.1.min.js"></script>
+    <script src="assets/leaflet-0.7.3/leaflet.js"></script>
+    <script src="assets/leaflet.proj4/proj4-compressed.js"></script>
+    <script src="assets/leaflet.proj4/proj4leaflet.js"></script>
+    <script src="assets/leaflet.markercluster/leaflet.markercluster-src.js"></script>
+    <script src="assets/leaflet.label/leaflet.label.js"></script>
+
+	
+    <script>
+	
+	
+	
+        var wms_url = 'http://134.249.136.27:8080/geoserver/gedit/wms';
+		var ows_url = 'http://134.249.136.27:8080/geoserver/gedit/ows';	
+	
+
+	
+        var layerOSM = new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            zIndex: 10,
+            attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+
+
+	
+		
+        var layerBoundary = new L.TileLayer.WMS(wms_url, {
+            layers: 'gedit:boundary',
+            format: 'image/png',
+            //styles: 'osm_poi',
+            transparent: true,
+            attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            zIndex: 10,
+            opacity: 1
+        });
+
+        var layerBuildings = new L.TileLayer.WMS(wms_url, {
+            layers: 'gedit:buildings',
+            format: 'image/png',
+            //styles: 'osm_poi',
+            transparent: true,
+            attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            zIndex: 11,
+            opacity: 1
+        });
+
+        var layerRoads = new L.TileLayer.WMS(wms_url, {
+            layers: 'gedit:roads',
+            format: 'image/png',
+            //styles: 'osm_poi',
+            transparent: true,
+            attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            zIndex: 11,
+            opacity: 1
+        });
+
+        var layerPoint = new L.TileLayer.WMS(wms_url, {
+            layers: 'gedit:point',
+            format: 'image/png',
+            //styles: 'osm_poi',
+            transparent: true,
+            attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            zIndex: 11,
+            opacity: 1
+        });
+
+
+
+
+        var map = L.map('map', {
+            layers: [layerBoundary, layerBuildings],
+            center: [48.462426, 35.043664],
+            zoom: 18
+        });
+
+
+
+
+        var baseLayer = {
+            "Boundary": layerBoundary,
+            "OpenStreetMap": layerOSM
+        };
+        var overlayLayer = {
+            "Buildings": layerBuildings,
+            "Roads": layerRoads,
+            "Points": layerPoint
+
+        };
+
+        var layerControl = L.control.layers(baseLayer, overlayLayer, {
+            collapsed: false
+        }).addTo(map);
+
+
+
+
+        function getBuildingsInfo(e) {
+
+            var bbox = map.getBounds()._southWest.lng + "," + map.getBounds()._southWest.lat + "," + map.getBounds()._northEast.lng + "," + map.getBounds()._northEast.lat;
+
+
+
+            $.ajax({
+                    url: wms_url,
+                    dataType: 'xml',
+                    data: {
+                        'tiled': true,
+                        'LAYERS': 'gedit:buildings',
+                        'QUERY_LAYERS': 'gedit:buildings',
+                        'STYLES': '',
+                        'SERVICE': 'WMS',
+                        'VERSION': '1.1.1',
+                        'REQUEST': 'GetFeatureInfo',
+                        'BBOX': bbox,
+                        'FEATURE_COUNT': '1',
+                        'WIDTH': map.getSize().x,
+                        'HEIGHT': map.getSize().y,
+                        'FORMAT': 'image/png',
+                        'INFO_FORMAT': 'application/vnd.ogc.gml',
+                        'SRS': 'EPSG:4326',
+                        'X': map.layerPointToContainerPoint(e.layerPoint).x,
+                        'Y': map.layerPointToContainerPoint(e.layerPoint).y
+                    }
+                })
+                .done(function(data) {
+                    if (data) {
+                        var $xml = $(data);
+
+                        var coords = $xml.find('gml\\:coordinates').text().split(' ');
+                        var build = $xml.find('gedit\\:BUILDING, BUILDING').text();
+
+                        var coordsnew = [];
+
+
+                        var ca = $xml.find('gml\\:coordinates').text();
+                        var cb = $xml.find('gml\\:coordinates').text().split(' ');
+
+                        for (var i = 0; i < coords.length; i++) {
+                            var coord = coords[i].split(',')
+                            coordsnew.push(coord);
+                        }
+                        var cc = coordsnew;
+
+                        console.log(ca);
+                        // 35.043106,48.4620229 35.0433595,48.4622298 35.0435357,48.4621348 35.0432822,48.461928 35.043106,48.4620229
+                        console.log(cb);
+                        // ["35.043106,48.4620229", "35.0433595,48.4622298", "35.0435357,48.4621348", "35.0432822,48.461928", "35.043106,48.4620229"]			
+                        console.log(cc);
+                        // [["35.043106", "48.4620229"], ["35.0433595", "48.4622298"], ["35.0435357", "48.4621348"], ["35.0432822", "48.461928"], ["35.043106", "48.4620229"]]		
+
+
+
+
+                        var popup = new L.popup({
+                            maxWith: 500
+                        });
+
+                        popup.setContent(build);
+                        popup.setLatLng(e.latlng);
+                        map.openPopup(popup);
+
+
+
+
+                        var poly = new L.rectangle(coordsnew, {
+                            color: "#ff7800",
+                            weight: 5
+                        }).addTo(map);
+
+                        //полигон получается, только нужно перевернуть координаты
+                        // [["35.043106", "48.4620229"], ["35.0433595", "48.4622298"], ["35.0435357", "48.4621348"], ["35.0432822", "48.461928"], ["35.043106", "48.4620229"]]		
+
+
+
+
+                    };
+                });
+        };
+
+
+
+
+        function getPointInfo(e) {
+
+            var bbox = map.getBounds()._southWest.lng + "," + map.getBounds()._southWest.lat + "," + map.getBounds()._northEast.lng + "," + map.getBounds()._northEast.lat;
+
+            $.ajax({
+                    url: wms_url,
+                    dataType: 'xml',
+                    data: {
+                        'tiled': true,
+                        'LAYERS': 'gedit:point',
+                        'QUERY_LAYERS': 'gedit:point',
+                        'STYLES': '',
+                        'SERVICE': 'WMS',
+                        'VERSION': '1.1.1',
+                        'REQUEST': 'GetFeatureInfo',
+                        'BBOX': bbox,
+                        'FEATURE_COUNT': '1',
+                        'WIDTH': map.getSize().x,
+                        'HEIGHT': map.getSize().y,
+                        'FORMAT': 'image/png',
+                        'INFO_FORMAT': 'application/vnd.ogc.gml',
+                        'SRS': 'EPSG:4326',
+                        'X': map.layerPointToContainerPoint(e.layerPoint).x,
+                        'Y': map.layerPointToContainerPoint(e.layerPoint).y
+                    }
+                })
+                .done(function(data) {
+                    if (data) {
+                        var $xml = $(data);
+
+                        var coords = $xml.find('gml\\:coordinates').text().split(' ');
+                        var build = $xml.find('gedit\\:NAME, NAME').text();
+
+                        var coordsnew = [];
+
+
+                        var ca = $xml.find('gml\\:coordinates').text();
+                        var cb = $xml.find('gml\\:coordinates').text().split(' ');
+						var cd = $xml.find('gml\\:coordinates').text().split(' ').toString();
+						
+						
+                        for (var i = 0; i < coords.length; i++) {
+                            var coord = coords[i].split(',')
+                            coordsnew.push(coord);
+                        }
+                        var cc = coordsnew;
+
+                        console.log(ca);
+                        // 35.0419489,48.4625027
+                        console.log(cb);
+                        // ["35.0419489,48.4625027"]		
+                        console.log(cc);
+                        // [["35.0419489", "48.4625027"]]		
+						console.log(cd);
+						// 35.0424298,48.4622504
+
+						
+						
+						
+
+
+                        var popup = new L.popup({
+                            maxWith: 500
+                        });
+
+                        popup.setContent(build);
+                        popup.setLatLng(e.latlng);
+                        map.openPopup(popup);
+
+var kk = '['+ca+']';
+//console.log(kk);
+
+
+
+
+
+						//var marker = L.marker([ca]).addTo(map);
+
+                    };
+                });
+        };
+
+
+									var circle = new L.circle([48.4625027, 35.0419489], 10, {
+										color: 'red',
+										fillColor: '#f03',
+										fillOpacity: 0.5
+									}).addTo(map);
+									
+									
+			
+
+
+
+
+
+
+
+
+
+/*
+var currentAddress = L.layerGroup().addTo(map);
+
+function handleJson(data) {
+
+var geoJsonLayer = new L.GeoJSON();
+    geojsonLayer.addData(data);
+    //geojsonLayer.setStyle(defaultStyle);
+    currentAddress.addLayer(geojsonLayer)
+
+}
+
+
+map.on('click', function(result) {
+
+    var rootUrl = 'http://134.249.136.27:8080/geoserver/gedit/ows';
+
+    var defaultParameters = {
+        service : 'WFS',
+        version : '1.0.0',
+        request : 'GetFeature',
+        typeName : 'gedit:buildings',
+        maxFeatures : 100,
+        outputFormat : 'text/javascript',
+        format_options : 'callback:parseResponse'
+
+    };
+
+    var customParams = {
+        bbox : map.getBounds().toBBoxString(),
+        //cql_filter:'CONTAINS(the_geom, POINT(' + thisLatLon + '))'
+    };
+
+    var parameters = L.Util.extend(defaultParameters, customParams);
+
+    console.log(rootUrl + L.Util.getParamString(parameters));
+
+    $.ajax({
+        url : rootUrl + L.Util.getParamString(parameters),
+        dataType : 'jsonp',
+        jsonpCallback : 'parseResponse',
+        success : handleJson
+    });
+});
+
+*/
+
+
+   var sw_lat = map.getBounds()._southWest.lat;
+   var sw_long = map.getBounds()._southWest.lng;
+   var ne_lat = map.getBounds()._northEast.lat;
+   var ne_long = map.getBounds()._northEast.lng;
+ console.log(ne_long);
+
+   map.on('moveend', function() { 
+     console.log(map.getBounds());
+});
+
+
+
+var bb = map.getBounds(),
+sw = bb.getSouthWest(),
+ne = bb.getNorthEast(),
+bbox = [
+[ parseFloat(sw.lat.toFixed(6)), parseFloat(sw.lng.toFixed(6)) ],
+[ parseFloat(ne.lat.toFixed(6)), parseFloat(ne.lng.toFixed(6)) ]
+];
+console.log(bbox);
+
+
+
+   
+//var cqlf = "BBOX(the_geom," + ne_long + "," + ne_lat + "," + sw_long + "," + sw_lat + ")";
+
+
+//console.log(cqlf);
+
+
+var defaultParameters = {
+    service : 'WFS',
+    version : '2.0',
+    request : 'GetFeature',
+    typeName : 'gedit:point',
+    outputFormat : 'text/javascript',
+    format_options : 'callback:getJson',
+    srsName : 'EPSG:4326',
+	maxFeatures: '10000'
+	//,cql_filter: cqlf
+};
+      var geoJsonLayer = new L.GeoJSON();
+
+      function getJson(data) {
+          geoJsonLayer.addData(data);
+      }
+
+var parameters = L.Util.extend(defaultParameters);
+var URL = ows_url + L.Util.getParamString(parameters);
+
+var markers = L.markerClusterGroup();
+var WFSLayer = null;
+var ajax = $.ajax({
+    url : URL,
+    dataType : 'jsonp',
+    jsonpCallback : 'getJson',
+    success : function (response) {
+       WFSLayer = L.geoJson(response, {
+            style: function (feature) {
+                return {
+                    stroke: false,
+                    fillColor: 'FFFFFF',
+                    fillOpacity: 0
+                };
+},
+            onEachFeature: function (feature, layer) {
+                popupOptions = {maxWidth: 600};
+                layer.bindLabel('<h4>'+feature.properties.OSM_ID+'</h4>');
+                //sidebar.setContent('<h4>'+feature.properties.musno+'</h4><br>'+'<h4>'+feature.properties.exchange_name+'</h4><br>'+feature.properties.pcp, popupOptions);
+                layer.bindPopup('<h4>'+feature.properties.OSM_ID+'</h4><br>'+'<h4>'+feature.properties.NAME+'</h4><br>'+feature.properties.gid
+                    ,popupOptions);
+            }
+	        }).addTo(markers);
+    }
+});
+markers.addTo(map);
+
+
+
+
+
+
+
+
+
+			
+									
+        map.on("overlayadd", function(e) {
+            if (e.layer === layerBuildings) {
+                map.addEventListener('click', getBuildingsInfo);
+            }
+            if (e.layer === layerPoint) {
+                map.addEventListener('click', getPointInfo);
+            }
+        });
+        map.on("overlayremove", function(e) {
+            if (e.layer === layerBuildings) {
+                map.removeEventListener('click', getBuildingsInfo);
+            }
+            if (e.layer === layerPoint) {
+                map.removeEventListener('click', getPointInfo);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
