@@ -60,10 +60,11 @@
                     routeWhileDragging: true,
                     routeDragTimeout: 250
                 });
+		
+		var rlayer = L.layerGroup([routing]);
+		map.hasLayer(rlayer) ? map.removeLayer(rlayer) : map.addLayer(rlayer);		
 
-                map.addControl(routing);
-
-            },
+		},
             'Display Route'
         ).addTo(map);
     </script>
