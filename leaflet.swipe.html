@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Leaflet Swipe Example</title>
+    <title>Leaflet Swipe Example For Several Layers</title>
 
     <link rel="stylesheet" href="assets/bootstrap-3.3.1/css/bootstrap.css">
     <link rel="stylesheet" href="assets/leaflet-0.7.3/leaflet.css">
@@ -98,7 +98,7 @@
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" style="font-family:courier; font-size:250%; margin-left: -5px" href="">Leaflet Swipe Example</a>
+                <a class="navbar-brand" style="font-family:courier; font-size:250%; margin-left: -5px" href="">Leaflet Swipe Example For Several Layers</a>
             </div>
         </div>
     </div>
@@ -106,7 +106,7 @@
     <div id="map" class="map">
         <div id="layer_selector" class="infobox">
             <ul>
-                <li id="a1" class="button index selected" style="text-transform: none;">Humanitarian</li>
+                <li id="a1" class="button index" style="text-transform: none;">Humanitarian</li>
                 <li id="a2" class="button cleanup">OSM</li>
                 <li id="a3" class="button diesel">MapQuestOSM</li>
                 <li id="a4" class="button water">Thunderforest</li>
@@ -120,11 +120,9 @@
     <script src="assets/jquery-1.11.1.min.js"></script>
     <script src="assets/leaflet-0.7.3/leaflet.js"></script>
     <script src="assets/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-    <script src="assets/leaflet.boundary-canvas/BoundaryCanvas.js"></script>	
-	
+    <script src="assets/leaflet.boundary-canvas/BoundaryCanvas.js"></script>
 
     <script>
-	
         var BingLayer = L.TileLayer.extend({
             getTileUrl: function(tilePoint) {
                 this._adjustTilePoint(tilePoint);
@@ -151,19 +149,28 @@
             }
         });;
 
-	
+        var testGeom = {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [5.9559111595, 45.8179931641],
+                    [5.9559111595, 47.808380127],
+                    [10.4920501709, 47.808380127],
+                    [10.4920501709, 45.8179931641],
+                    [5.9559111595, 45.8179931641]
+                ]
+            ]
+        };
 
-    var testGeom = {"type":"Polygon","coordinates":[[[5.9559111595,45.8179931641],[5.9559111595,47.808380127],[10.4920501709,47.808380127],[10.4920501709,45.8179931641],[5.9559111595,45.8179931641]]]};
-    var latLngGeom = [],
-        r, k;
-    for (r = 0; r < testGeom.coordinates.length; r++) {
-        latLngGeom[r] = [];
-        for (k = 0; k < testGeom.coordinates[r].length; k++){
-            latLngGeom[r].push(new L.LatLng(testGeom.coordinates[r][k][1], testGeom.coordinates[r][k][0]));
-        }
-    };
+        var latLngGeom = [],
+            r, k;
+        for (r = 0; r < testGeom.coordinates.length; r++) {
+            latLngGeom[r] = [];
+            for (k = 0; k < testGeom.coordinates[r].length; k++) {
+                latLngGeom[r].push(new L.LatLng(testGeom.coordinates[r][k][1], testGeom.coordinates[r][k][0]));
+            }
+        };
 
-		
         var layerBA = new BingLayer('http://t{s}.tiles.virtualearth.net/tiles/a{q}.jpeg?g=2732', {
             maxZoom: 19,
             subdomains: ['0', '1', '2', '3', '4'],
@@ -172,31 +179,29 @@
 
         var layer01 = new L.TileLayer.boundaryCanvas('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
             boundary: latLngGeom,
-			attribution: 'Tiles &copy; <a href="http://hot.openstreetmap.org/">Humanitarian OpenStreetMap Team</a>; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: 'Tiles &copy; <a href="http://hot.openstreetmap.org/">Humanitarian OpenStreetMap Team</a>; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         });
 
         var layer02 = new L.TileLayer.boundaryCanvas('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             boundary: latLngGeom,
-			attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         });
 
         var layer03 = new L.TileLayer.boundaryCanvas("http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png", {
             subdomains: ["otile1", "otile2", "otile3", "otile4"],
             boundary: latLngGeom,
-			attribution: '&copy; Tiles courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a>. &copy; Map data <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors'
+            attribution: '&copy; Tiles courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a>. &copy; Map data <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors'
         });
 
         var layer04 = new L.TileLayer.boundaryCanvas('http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png', {
             boundary: latLngGeom,
-			attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+            attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
         });
 
         var layer05 = new L.TileLayer.boundaryCanvas('http://{s}.hikebike.gpsies.com/{z}/{x}/{y}.png', {
             boundary: latLngGeom,
-			attribution: '&copy; <a href="http://hikebikemap.org/">HikeBikeMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+            attribution: '&copy; <a href="http://hikebikemap.org/">HikeBikeMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
         });
-
-
 
         var map = L.map('map', {
             layers: [layerBA],
@@ -207,59 +212,121 @@
         });
 
 
-
         $('.button').click(function() {
             $('.button').removeClass('selected');
             $(this).addClass('selected');
 
             if ($(this).attr('id') === "a1") {
-                map.addLayer(layer01);
+                var overlay = layer01.addTo(map);
+		
+                var range = document.getElementById('range');
+                function clip() {
+                    var nw = map.containerPointToLayerPoint([0, 0]),
+                        se = map.containerPointToLayerPoint(map.getSize()),
+                        clipX = nw.x + (se.x - nw.x) * range.value;
+                    overlay.getContainer().style.clip = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)';
+                }
+                range['oninput' in range ? 'oninput' : 'onchange'] = clip;
+                map.on('move', clip);
+				
             } else {
                 map.removeLayer(layer01);
             };
 
             if ($(this).attr('id') === "a2") {
-                map.addLayer(layer02);
+                var overlay = layer02.addTo(map);
+			
+				var range = document.getElementById('range');
+                function clip() {
+                    var nw = map.containerPointToLayerPoint([0, 0]),
+                        se = map.containerPointToLayerPoint(map.getSize()),
+                        clipX = nw.x + (se.x - nw.x) * range.value;
+                    overlay.getContainer().style.clip = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)';
+                }
+
+                range['oninput' in range ? 'oninput' : 'onchange'] = clip;
+                map.on('move', clip);
+	
             } else {
                 map.removeLayer(layer02);
             };
 
             if ($(this).attr('id') === "a3") {
-                map.addLayer(layer03);
+                var overlay = layer03.addTo(map);
+				
+				var range = document.getElementById('range');
+                function clip() {
+                    var nw = map.containerPointToLayerPoint([0, 0]),
+                        se = map.containerPointToLayerPoint(map.getSize()),
+                        clipX = nw.x + (se.x - nw.x) * range.value;
+                    overlay.getContainer().style.clip = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)';
+                }
+                range['oninput' in range ? 'oninput' : 'onchange'] = clip;
+                map.on('move', clip);
+				
             } else {
                 map.removeLayer(layer03);
             };
 
             if ($(this).attr('id') === "a4") {
-                map.addLayer(layer04);
+                var overlay = layer04.addTo(map);
+                
+				var range = document.getElementById('range');
+                function clip() {
+                    var nw = map.containerPointToLayerPoint([0, 0]),
+                        se = map.containerPointToLayerPoint(map.getSize()),
+                        clipX = nw.x + (se.x - nw.x) * range.value;
+                    overlay.getContainer().style.clip = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)';
+                }
+                range['oninput' in range ? 'oninput' : 'onchange'] = clip;
+                map.on('move', clip);
+				
             } else {
                 map.removeLayer(layer04);
             };
 
             if ($(this).attr('id') === "a5") {
-                map.addLayer(layer05);
+                var overlay = layer05.addTo(map);
+                
+				var range = document.getElementById('range');
+                function clip() {
+                    var nw = map.containerPointToLayerPoint([0, 0]),
+                        se = map.containerPointToLayerPoint(map.getSize()),
+                        clipX = nw.x + (se.x - nw.x) * range.value;
+                    overlay.getContainer().style.clip = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)';
+                }
+                range['oninput' in range ? 'oninput' : 'onchange'] = clip;
+                map.on('move', clip);
+				
             } else {
                 map.removeLayer(layer05);
             };
+
+			//console.log(map.hasLayer(layer02));
+			//console.log($(this).attr('id'));
+			
         });
 
 
-		var overlay = layer01.addTo(map);
-		var range = document.getElementById('range');
 
-		function clip() {
-		  var nw = map.containerPointToLayerPoint([0, 0]),
-			  se = map.containerPointToLayerPoint(map.getSize()),
-			  clipX = nw.x + (se.x - nw.x) * range.value;
-		  overlay.getContainer().style.clip = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)';
-		}
 
-		range['oninput' in range ? 'oninput' : 'onchange'] = clip;
-		map.on('move', clip);
+        /*		
+        		var overlay = layer01.addTo(map);
+        		var range = document.getElementById('range');
 
-		//map.setView([50.0668, 36.2637], 8);
+        		function clip() {
+        		  var nw = map.containerPointToLayerPoint([0, 0]),
+        			  se = map.containerPointToLayerPoint(map.getSize()),
+        			  clipX = nw.x + (se.x - nw.x) * range.value;
+        		  overlay.getContainer().style.clip = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)';
+        		}
 
-	
+        		range['oninput' in range ? 'oninput' : 'onchange'] = clip;
+        		map.on('move', clip);
+
+        */
+        map.setView([47, 8.1], 8);
+		
 		
     </script>
 
