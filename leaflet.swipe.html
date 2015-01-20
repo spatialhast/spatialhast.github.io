@@ -218,8 +218,9 @@
 
             if ($(this).attr('id') === "a1") {
                 var overlay = layer01.addTo(map);
-		
+
                 var range = document.getElementById('range');
+
                 function clip() {
                     var nw = map.containerPointToLayerPoint([0, 0]),
                         se = map.containerPointToLayerPoint(map.getSize()),
@@ -228,15 +229,16 @@
                 }
                 range['oninput' in range ? 'oninput' : 'onchange'] = clip;
                 map.on('move', clip);
-				
+
             } else {
                 map.removeLayer(layer01);
             };
 
             if ($(this).attr('id') === "a2") {
                 var overlay = layer02.addTo(map);
-			
-				var range = document.getElementById('range');
+
+                var range = document.getElementById('range');
+
                 function clip() {
                     var nw = map.containerPointToLayerPoint([0, 0]),
                         se = map.containerPointToLayerPoint(map.getSize()),
@@ -246,15 +248,16 @@
 
                 range['oninput' in range ? 'oninput' : 'onchange'] = clip;
                 map.on('move', clip);
-	
+
             } else {
                 map.removeLayer(layer02);
             };
 
             if ($(this).attr('id') === "a3") {
                 var overlay = layer03.addTo(map);
-				
-				var range = document.getElementById('range');
+
+                var range = document.getElementById('range');
+
                 function clip() {
                     var nw = map.containerPointToLayerPoint([0, 0]),
                         se = map.containerPointToLayerPoint(map.getSize()),
@@ -263,15 +266,16 @@
                 }
                 range['oninput' in range ? 'oninput' : 'onchange'] = clip;
                 map.on('move', clip);
-				
+
             } else {
                 map.removeLayer(layer03);
             };
 
             if ($(this).attr('id') === "a4") {
                 var overlay = layer04.addTo(map);
-                
-				var range = document.getElementById('range');
+
+                var range = document.getElementById('range');
+
                 function clip() {
                     var nw = map.containerPointToLayerPoint([0, 0]),
                         se = map.containerPointToLayerPoint(map.getSize()),
@@ -280,15 +284,16 @@
                 }
                 range['oninput' in range ? 'oninput' : 'onchange'] = clip;
                 map.on('move', clip);
-				
+
             } else {
                 map.removeLayer(layer04);
             };
 
             if ($(this).attr('id') === "a5") {
                 var overlay = layer05.addTo(map);
-                
-				var range = document.getElementById('range');
+
+                var range = document.getElementById('range');
+
                 function clip() {
                     var nw = map.containerPointToLayerPoint([0, 0]),
                         se = map.containerPointToLayerPoint(map.getSize()),
@@ -297,18 +302,15 @@
                 }
                 range['oninput' in range ? 'oninput' : 'onchange'] = clip;
                 map.on('move', clip);
-				
+
             } else {
                 map.removeLayer(layer05);
             };
 
-			//console.log(map.hasLayer(layer02));
-			//console.log($(this).attr('id'));
-			
+            //console.log(map.hasLayer(layer02));
+            //console.log($(this).attr('id'));
+
         });
-
-
-
 
         /*		
         		var overlay = layer01.addTo(map);
@@ -325,9 +327,8 @@
         		map.on('move', clip);
 
         */
+		
         map.setView([47, 8.1], 8);
-		
-		
     </script>
 
 </body>
