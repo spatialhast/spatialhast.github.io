@@ -1,9 +1,8 @@
 ﻿<!doctype html>
 <html>
-
 <head>
     <title>Leaflet Routing. Button</title>
-    <link rel="stylesheet" href="assets/font-awesome-4.2.0/css/font-awesome.min.css">	
+    <link rel="stylesheet" href="assets/font-awesome-4.2.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/leaflet-0.7.3/leaflet.css">
     <link rel="stylesheet" href="assets/leaflet.routing-machine/dist/leaflet-routing-machine.css" />
 
@@ -26,7 +25,7 @@
 
     <script src="assets/jquery-1.11.1.min.js"></script>
     <script src="assets/leaflet-0.7.3/leaflet.js"></script>
-    <script src="assets/leaflet.easybutton/easy-button.js"></script>	
+    <script src="assets/leaflet.easybutton/easy-button.js"></script>
     <script src="assets/leaflet.routing-machine/dist/leaflet-routing-machine.js"></script>
     <script src="assets/leaflet.routing-machine/dist/Control.Geocoder.js"></script>
 
@@ -41,34 +40,32 @@
             attribution: '&copy; Map Data <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-
+        var rlayer = null;
         L.easyButton('fa-level-up',
             function() {
-
-                var routing = L.Routing.control({
-                    plan: L.Routing.plan([
-                        L.latLng(50.07132, 35.14103),
-                        L.latLng(50.05459, 35.18239)
-                    ], {
-                        waypointIcon: function(i) {
-                            return new L.Icon.Label.Default({
-                                labelText: String.fromCharCode(65 + i)
-                            });
-                        },
-                        geocoder: L.Control.Geocoder.nominatim()
-                    }),
-                    routeWhileDragging: true,
-                    routeDragTimeout: 250
-                });
-		
-		var rlayer = L.layerGroup([routing]);
-		map.hasLayer(rlayer) ? map.removeLayer(rlayer) : map.addLayer(rlayer);		
-
-		},
-            'Display Route'
-        ).addTo(map);
+                if (rlayer) {
+                    map.removeLayer(rlayer);
+                    rlayer = null;
+                } else {
+                    var routing = L.Routing.control({
+                        plan: L.Routing.plan([
+                            L.latLng(50.07132, 35.14103),
+                            L.latLng(50.05459, 35.18239)
+                        ], {
+                            waypointIcon: function(i) {
+                                return new L.Icon.Label.Default({
+                                    labelText: String.fromCharCode(65 + i)
+                                });
+                            },
+                            geocoder: L.Control.Geocoder.nominatim()
+                        }),
+                        routeWhileDragging: true,
+                        routeDragTimeout: 250
+                    });
+                    rlayer = L.layerGroup([routing]);
+                    map.addLayer(rlayer);
+                }
+            }, 'Display Route').addTo(map);
     </script>
-
 </body>
-
 </html>
