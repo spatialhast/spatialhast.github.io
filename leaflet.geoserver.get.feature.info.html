@@ -34,8 +34,8 @@
 	
 	
 	
-        var wms_url = 'http://134.249.136.27:8080/geoserver/gedit/wms';
-		var ows_url = 'http://134.249.136.27:8080/geoserver/gedit/ows';	
+        var wms_url = 'http://localhost:8080/geoserver/gedit/wms';
+		var ows_url = 'http://localhost:8080/geoserver/gedit/ows';	
 	
 
 	
@@ -89,10 +89,15 @@
         });
 
 
-
+        var aero = new L.tileLayer('http://17200.selcdn.ru/AerialWWII/{z}/{x}/{y}.jpg', {
+            zIndex: 10
+        });
+		
+		
+		
 
         var map = L.map('map', {
-            layers: [layerBoundary, layerBuildings],
+            layers: [layerOSM, layerBuildings],
             center: [48.462426, 35.043664],
             zoom: 18
         });
@@ -107,7 +112,8 @@
         var overlayLayer = {
             "Buildings": layerBuildings,
             "Roads": layerRoads,
-            "Points": layerPoint
+            "Points": layerPoint,
+			"Aero": aero
 
         };
 
@@ -319,7 +325,7 @@ var geoJsonLayer = new L.GeoJSON();
 
 map.on('click', function(result) {
 
-    var rootUrl = 'http://134.249.136.27:8080/geoserver/gedit/ows';
+    var rootUrl = 'http://localhost:8080/geoserver/gedit/ows';
 
     var defaultParameters = {
         service : 'WFS',
