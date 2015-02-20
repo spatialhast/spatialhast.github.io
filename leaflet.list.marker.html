@@ -54,7 +54,7 @@
         }
     });		
 		
-        $.getJSON("http://134.249.136.27:8080/geoserver/krasnokutsk/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=krasnokutsk:usptemp&maxFeatures=50&outputFormat=application/json", function(data) {
+        $.getJSON("http://localhost:8080/geoserver/krasnokutsk/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=krasnokutsk:usptemp&maxFeatures=50&outputFormat=application/json", function(data) {
             Markerlayer.addData(data);
         });
         Markerlayer.addTo(map);
