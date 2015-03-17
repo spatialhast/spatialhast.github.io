@@ -93,11 +93,6 @@
                 '<a href="http://giscience.uni-hd.de/" target="_blank">GIScience Research Group @ University of Heidelberg</a>'
         });
 
-        var layerHikeBike = L.tileLayer('http://{s}.hikebike.gpsies.com/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: '&copy; <a href="http://hikebikemap.org/">HikeBikeMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
-        });
-
         var layerOSMTopo = L.tileLayer('http://opentopomap.org/{z}/{x}/{y}.png', {
             maxZoom: 16,
             zIndex: -1,
@@ -119,11 +114,10 @@
         var map = new L.Map('map', {
             minZoom: 13,
             maxZoom: 19,
-            layers: [layerHikeBike]
+            layers: [layerTFL]
         }).setView([50.0658, 35.1658], 14);
 
         var baseLayers = {
-            "HikeBike Map": layerHikeBike,
             "Thunderforest Landscape": layerTFL,
             "MapBox Imagery": layerMapBoxImagery,
             "OpenStreetMap": layerOSM,
